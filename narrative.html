@@ -108,7 +108,7 @@ b{font-weight:700}
 .card .l .ep{font-size:14px;color:#8a8a8a;font-weight:600;white-space:nowrap;margin-bottom:2px}
 .card .l .kr{font-size:36px;font-weight:700;line-height:1;letter-spacing:-.03em;white-space:nowrap}
 .card .r{font-size:14px;line-height:1.72;padding-top:2px;font-weight:500;white-space:nowrap}
-.blk{position:absolute;left:22px;right:24px;color:#fff;padding:72px 24px 26px;font-size:16px;line-height:1.7;font-weight:500;z-index:1;overflow:hidden}
+.blk{position:absolute;left:22px;right:24px;color:#fff;border:var(--bw) solid #000;padding:72px 24px 26px;font-size:16px;line-height:1.7;font-weight:500;z-index:1;overflow:hidden}
 .blk.skill{top:168px}
 .blk.back{top:500px;background:var(--dark);padding-top:70px}
 .pf .lab{position:absolute;left:-35px;top:22px;background:#fff;border:var(--bw) solid #000;color:#000;font:700 24px/1 var(--grot);font-stretch:expanded;padding:9px 14px 8px;letter-spacing:0;z-index:4}
@@ -183,6 +183,8 @@ b{font-weight:700}
   .pf .c1{display:flex;flex-direction:column;gap:24px}
   .nm,.kw,.card,.blk,.nav{position:static;width:auto;transform:none;margin:0;height:auto !important}
   .nm{display:inline-block;align-self:flex-start;font-size:48px}
+  .c1 .card,.c3 .card{margin-top:0}
+  .c3{display:flex;flex-direction:column;gap:24px}
   .kw{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
   .kw span{font-size:26px}
   .card{width:100%;flex-wrap:wrap}
@@ -191,7 +193,7 @@ b{font-weight:700}
   body{overflow-x:hidden}
   .pf .lab{position:absolute;left:4px;font-size:18px}
   .blk .hj{font-size:80px}
-  .desc{padding:0}
+  .desc{padding:0 !important}
   .nav{display:inline-flex;height:64px;font-size:34px;align-self:flex-end}
   .nav svg{width:70px}
   #narrative{padding:90px 16px 0 16px}
@@ -285,6 +287,7 @@ function renderProfile(who){
         <div class="col c3">${desc(B)}<a class="nav" href="#profile/vance"><span>${esc(B.next)}</span>${arrowR}</a></div>
       </div></div>`;
   $('#profile').innerHTML=ret+html;
+  if(innerWidth<=1100){ const cd=$('#profile .card'), nm=$('#profile .nm'); nm.insertAdjacentElement('afterend',cd); }
   fitBlocks();
   /* 폰트 로딩·내용 높이 변화에도 라벨·블록 위치를 다시 맞춤 */
   const c2=$('#profile .c2'); if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(c2); c2.querySelectorAll('.blk').forEach(b=>{if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(b);});
@@ -295,6 +298,7 @@ function fitBlocks(){
   const col=$('#profile .c2'); if(!col)return;
   const cd=col.querySelector('.card'), sk=col.querySelector('.skill'), bk=col.querySelector('.back');
   if(innerWidth<=1100){ col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px'; col.querySelector('.lab-back').style.top=(bk.offsetTop+22)+'px'; return; }
+  if(!cd||cd.parentElement!==col)return;
   sk.style.top=(cd.offsetTop+cd.offsetHeight+20)+'px';
   bk.style.top=(sk.offsetTop+sk.offsetHeight+26)+'px';
   col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px';
@@ -313,7 +317,8 @@ function fitBlocks(){
   col.parentElement.style.minHeight=Math.max(innerHeight-160,need)+'px';
   $('#profile .pf').classList.toggle('tall',need>innerHeight-160);
 }
-addEventListener('resize',()=>{if($('#profile').classList.contains('active'))fitBlocks();});
+let wasNarrow=innerWidth<=1100;
+addEventListener('resize',()=>{ if(!$('#profile').classList.contains('active'))return; const n=innerWidth<=1100; if(n!==wasNarrow){wasNarrow=n;route();} else fitBlocks(); });
 
 /* ---------- 4. 서사 ---------- */
 function renderNarrative(){
