@@ -169,8 +169,12 @@ b{font-weight:700}
 
 /* ---------- 작은 화면 ---------- */
 @media (max-width:1100px){
-  #main{grid-template-columns:1fr;grid-template-rows:46% 1fr}
-  #main .list{left:12%;gap:70px}
+  #main{grid-template-columns:1fr;grid-template-rows:1fr}
+  #main .right{display:none}
+  #main .list{left:12%;top:50%;gap:60px}
+  .chk{font-size:14px;gap:14px}
+  .chk .bx{width:12px;height:12px;border-width:1.5px}
+  .chk .bx svg{left:-4px;top:-17px;width:22px;height:25px}
   .pf{padding:60px 0}
   .pf .rule{display:none}
   .pf.b .cols,.pf.a .cols{grid-template-columns:1fr;row-gap:40px;padding:0 20px}
