@@ -286,6 +286,9 @@ function renderProfile(who){
       </div></div>`;
   $('#profile').innerHTML=ret+html;
   fitBlocks();
+  /* 폰트 로딩·내용 높이 변화에도 라벨·블록 위치를 다시 맞춤 */
+  const c2=$('#profile .c2'); if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(c2); c2.querySelectorAll('.blk').forEach(b=>{if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(b);});
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitBlocks);
 }
 /* SKILL/BACKSTORY 박스가 카드·서로 겹치지 않게 세로 위치를 내용 높이에 맞춤 */
 function fitBlocks(){
