@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>narrative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,900&family=Manrope:wght@800&family=Inter+Tight:wght@700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Serif+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+/* =====================================================================
+   narrative  ·  보안서약서 → 체크리스트 → 프로필 / 서사 / TMI
+   글자는 narrative-data.js 에서 고치세요.
+   ===================================================================== */
+:root{
+  --ink:#111; --paper:#fcfcfc; --gray:#d9d9d9; --dark:#2a2a2a;
+  --green:#1cf52b; --red:#c8231f;
+  --kr:'SF Pro Text','SF Pro',-apple-system,system-ui,'Apple SD Gothic Neo','Pretendard','Malgun Gothic',sans-serif;
+  --grot:'SF Pro Display','SF Pro','Archivo','Manrope','Inter Tight',Arial,sans-serif;  /* SF Pro 없는 기기는 Archivo Expanded. font-stretch:expanded */
+  --cap:'SF Pro Display','SF Pro','Archivo','Inter Tight','Manrope',Arial,sans-serif;
+  --mono:'SF Mono',ui-monospace,'IBM Plex Mono',Menlo,monospace;
+  --serif:'Noto Serif KR','Apple Myungjo','Batang',serif;
+  --bw:2px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:#fff;color:var(--ink);font-family:var(--kr);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:normal;overflow-wrap:break-word}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+b{font-weight:700}
+.dim{color:#8a8a8a}
+.screen{display:none}
+.screen.active{display:block}
+.ret{position:fixed;top:22px;left:24px;z-index:20;font:600 12px/1 var(--mono);letter-spacing:.14em;padding:6px 8px;opacity:.55;transition:opacity .2s}
+.ret:hover{opacity:1}
+
+/* ---------- 1. 랜딩 : 보안서약서 ---------- */
+#oath{background:#222;min-height:100vh;padding:31vh 16px 14vh}
+/* 종이 폭 = 화면의 약 36% (최소 340px). 안의 글자는 종이 폭에 비례(cqw) */
+.paper{width:clamp(min(92vw,560px),36vw,720px);margin:0 auto;background:var(--paper);container-type:inline-size;color:#000;font-family:var(--serif)}
+.paper .in{padding:11cqw 11cqw 11cqw;font-size:max(1.32cqw,9.5px);line-height:1.45}
+.paper .form{font-weight:700;font-size:max(1.36cqw,9.5px);margin:0 0 1cqw}
+.paper .box{border:1.5px solid #000;padding:5.6cqw 4.3cqw 5.4cqw}
+.paper h1{margin:0 0 70px;text-align:center;font-family:var(--kr);font-stretch:expanded;font-weight:700;font-size:5.6cqw;letter-spacing:.18em;line-height:1}
+.paper h1{margin-bottom:6.3cqw}
+.paper p{margin:0}
+.paper .intro{margin-bottom:2.5cqw}
+.paper .art{margin-bottom:2cqw}
+.paper .art h3{margin:0 0 .2cqw;font-size:inherit;font-weight:400}
+.paper ol{margin:0;padding:0;list-style:none;counter-reset:n}
+.paper ol li{counter-increment:n;padding-left:2.6em;position:relative}
+.paper ol li::before{content:counter(n) '.';position:absolute;left:1.3em}
+.paper .pledge{margin:4.3cqw 0 6.3cqw;text-align:center;font-weight:700;font-size:max(1.45cqw,10px);line-height:1.5}
+.paper .sig{width:min(100%,24em);margin-left:auto;position:relative;cursor:pointer}
+.paper .date{text-align:center;margin-bottom:2.4em;white-space:nowrap}
+.paper .date u{display:inline-block;width:4em;text-decoration:none;border-bottom:1px solid #000;height:1em;vertical-align:bottom}
+.paper .fld{display:grid;grid-template-columns:8.2em 1fr;align-items:end;margin-bottom:.35em}
+.paper .fld span{text-align:right;padding-right:6px;white-space:nowrap}
+.paper .fld i{display:block;border-bottom:1px solid #000;height:1.2em;font-style:normal;text-align:right;font-size:.9em;color:#333}
+.paper .to{margin-top:2.2em;font-weight:700;font-size:1.04em;text-align:right;padding-right:2.3em}
+.stamp{position:absolute;right:1.8em;bottom:-.4em;width:7.7em;height:7.7em;border-radius:50%;border:.28em solid var(--red);color:var(--red);display:grid;place-items:center;font-family:var(--kr);font-weight:800;font-size:1em;letter-spacing:-.04em;line-height:1;transform:rotate(-28deg);mix-blend-mode:multiply;opacity:0;filter:url(#rough);pointer-events:none;user-select:none;visibility:hidden}
+.stamp span{font-size:3.7em}
+.stamp.press{visibility:visible;animation:press .55s cubic-bezier(.2,1.2,.4,1) forwards}
+@keyframes press{0%{transform:rotate(-28deg) scale(2.2);opacity:0}45%{transform:rotate(-28deg) scale(.92);opacity:1}70%{transform:rotate(-28deg) scale(1.04);opacity:.95}100%{transform:rotate(-28deg) scale(1);opacity:.92}}
+.paper .sig:hover .fld i{border-bottom-color:var(--red)}
+.svgdefs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- 2. 메인 : 체크리스트 + 서류 ---------- */
+#main{position:fixed;inset:0;grid-template-columns:39.6% 1fr;overflow:hidden}
+#main.active{display:grid}
+#main .left{background:#fdfdfd;position:relative}
+#main .list{position:absolute;left:31%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:170px}
+.chk{display:flex;align-items:center;gap:28px;font:700 28px/1 var(--cap);font-stretch:expanded;letter-spacing:.01em;position:relative;text-align:left}
+.chk .bx{position:relative;width:24px;height:24px;border:var(--bw) solid #000;flex:none}
+.chk .bx svg{position:absolute;left:-7px;top:-34px;width:44px;height:50px;overflow:visible}
+.chk .bx path{fill:none;stroke:var(--green);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:70;stroke-dashoffset:70}
+.chk.done .bx path{stroke-dashoffset:0}
+.chk.anim .bx path{transition:stroke-dashoffset .38s cubic-bezier(.3,.9,.4,1)}
+.chk:hover .bx{background:#f0f0f0}
+#main .right{background:var(--gray);position:relative;overflow:hidden}
+
+/* ---------- 3. 프로필 ---------- */
+.pf{position:relative;min-height:100vh;padding:80px 0 80px}
+.pf .rule{position:absolute;left:0;right:0;height:var(--bw);background:#000}
+.pf .rule.t{top:80px}
+.pf .rule.b{bottom:80px}
+.pf .cols{display:grid;min-height:calc(100vh - 160px)}
+.pf.b .cols{grid-template-columns:39.3% 24% 30.7%;column-gap:2.1%}
+.pf.a .cols{grid-template-columns:32.5% 23.8% 1fr;column-gap:2.1%}
+.pf .col{position:relative;border:var(--bw) solid #000;border-top:0;border-bottom:0}
+.pf.b .c1{border-left:0}
+.pf.b .c3{border-right:0}
+.pf.a .c1{border-left:0}
+.pf.a .c3{border-right:0}
+.pf .col::before,.pf .col::after{content:'';position:absolute;left:-2px;right:-2px;height:var(--bw);background:#000}
+.pf .col::before{top:0}
+.pf .col::after{bottom:0}
+.nm{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;padding:0 22px;display:flex;align-items:center;font:900 clamp(40px,4.4vw,90px)/1.2 var(--grot);font-stretch:expanded;letter-spacing:-.01em;white-space:nowrap}
+.pf.b .nm{top:32px;left:76%}
+.pf.a .nm{top:32px;left:-20%}
+.kw{position:absolute;display:flex;flex-direction:column;gap:14px;width:215px}
+.pf.b .kw{left:67%;bottom:24px}
+.pf.a .kw{left:9%;bottom:30px}
+.kw span{display:block;border:var(--bw) solid #000;height:60px;line-height:56px;text-align:center;font-size:38px;font-weight:600;letter-spacing:-.03em;white-space:nowrap;background:#fff}
+.card{position:absolute;top:32px;border:var(--bw) solid #000;background:#fff;padding:22px 24px 20px 24px;display:flex;gap:22px;align-items:center;z-index:2}
+.pf.b .card{right:24px;width:68%;min-width:max-content}
+.pf.a .card{left:22px;width:68%;min-width:max-content}
+.card .l .ep{font-size:14px;color:#8a8a8a;font-weight:600;white-space:nowrap;margin-bottom:2px}
+.card .l .kr{font-size:36px;font-weight:700;line-height:1;letter-spacing:-.03em;white-space:nowrap}
+.card .r{font-size:14px;line-height:1.72;padding-top:2px;font-weight:500;white-space:nowrap}
+.blk{position:absolute;left:22px;right:24px;color:#fff;padding:72px 24px 26px;font-size:16px;line-height:1.7;font-weight:500;z-index:1;overflow:hidden}
+.blk.skill{top:168px}
+.blk.back{top:500px;background:var(--dark);padding-top:70px}
+.pf .lab{position:absolute;left:-35px;top:22px;background:#fff;border:var(--bw) solid #000;color:#000;font:700 24px/1 var(--grot);font-stretch:expanded;padding:9px 14px 8px;letter-spacing:0;z-index:4}
+.blk .hj{position:absolute;left:28px;top:-2px;font:900 126px/1 var(--serif);letter-spacing:-.06em;color:rgba(0,0,0,.62);white-space:nowrap;pointer-events:none;z-index:0}
+.blk .tx{position:relative;z-index:1}
+.desc{padding:38px 44px 120px;font-size:16px;line-height:1.62;font-weight:500}
+.pf.b .desc{padding-right:140px}
+.pf.a .desc{padding-left:29%;padding-right:40px}
+.desc p{margin:0 0 26px}
+.nav{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;display:flex;align-items:center;gap:34px;padding:0 26px;height:80px;font:900 clamp(34px,3.3vw,64px)/1 var(--grot);font-stretch:expanded;letter-spacing:-.01em;white-space:nowrap}
+.nav svg{width:120px;height:40px;flex:none}
+.nav svg *{stroke:#000;stroke-width:3;fill:none;stroke-linecap:square}
+.pf.b .nav{right:-6px;bottom:-14px}
+.pf.a .nav{left:50px;bottom:-28px}
+.pf .nav:hover{background:#f2f2f2}
+/* 내용이 창보다 길면 화살표 버튼은 화면 아래에 고정 */
+.pf.tall .nav{position:fixed;bottom:18px}
+.pf.tall.b .nav{right:18px}
+.pf.tall.a .nav{left:18px}
+
+/* ---------- 4. 서사 ---------- */
+#narrative{min-height:100vh;padding:150px 40px 0 85px}
+.tl{position:relative;display:grid;grid-template-columns:377px 148px minmax(0,952px);row-gap:0}
+.tl .line{position:absolute;left:calc(377px + 74px - 2px);top:28px;bottom:0;width:4px;background:#000}
+.ch{display:contents}
+.ch .head{grid-column:3;display:flex;align-items:center;gap:22px;min-height:56px;margin-bottom:28px;position:relative}
+.ch .head .no{font:600 28px/1 var(--mono);letter-spacing:-.02em}
+.ch .head .tt{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.ch .head .d{margin-left:auto;border:var(--bw) solid #000;border-radius:30px;background:var(--green);font:600 16px/1 var(--kr);padding:7px 20px 6px;letter-spacing:-.02em}
+.ch .node{position:absolute;left:-74px;top:9px;width:37px;height:37px;border-radius:50%;background:var(--green);border:3px solid #000;transform:translateX(-50%)}
+.ch .body{grid-column:3;border:var(--bw) solid #000;border-radius:6px;padding:26px 44px;font-size:17px;line-height:1.7;font-weight:500;margin-bottom:28px}
+.ch .body p{margin:0 0 1em}
+.ch .body p:last-child{margin:0}
+.ch .side{grid-column:1;display:flex;flex-direction:column;gap:30px;padding-bottom:40px}
+.ch .note{position:relative;min-height:142px}
+.ch .note .nb{border:var(--bw) solid #000;border-radius:24px;padding:26px 28px;min-height:142px;background:#fff;opacity:0;transform:translateX(16px);transition:opacity .3s,transform .3s;pointer-events:none}
+.ch .note.open .nb{opacity:1;transform:none;pointer-events:auto}
+.ch .note .nn{font-size:17px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.ch .note .nt{font-size:15px;font-weight:500;margin-top:2px}
+.ch .note::after{content:'';position:absolute;left:100%;top:50%;width:62px;border-top:1.5px dotted #333;opacity:0;transition:opacity .3s}
+.ch .note.open::after{opacity:1}
+.ch .note .nc{position:absolute;left:calc(100% + 74px);top:50%;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #000;transform:translate(-50%,-50%);z-index:2;cursor:pointer;transition:background .2s,transform .2s}
+.ch .note .nc:hover{transform:translate(-50%,-50%) scale(1.25)}
+.ch .note.open .nc{background:#000}
+/* 스크롤 순차 등장 */
+.ch .rv{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.ch .rv.in{opacity:1;transform:none}
+.ch .head .node{transition:transform .4s;transform:translateX(-50%) scale(0)}
+.ch .head.in .node{transform:translateX(-50%) scale(1)}
+.ch .talk{grid-column:3;display:flex;flex-direction:column;gap:14px;padding-bottom:40px;min-height:40px}
+.ch .bub{max-width:68%;border-radius:40px;padding:22px 40px;font-size:17px;font-weight:500;line-height:1.5}
+.ch .bub.left{align-self:flex-start;background:var(--gray);color:#111}
+.ch .bub.right{align-self:flex-end;background:#777;color:#fff}
+.ch .gap{grid-column:1/-1;height:80px}
+
+/* ---------- 5. TMI ---------- */
+#tmi{min-height:100vh}
+
+/* ---------- 작은 화면 ---------- */
+@media (max-width:1100px){
+  #main{grid-template-columns:1fr;grid-template-rows:46% 1fr}
+  #main .list{left:12%;gap:70px}
+  .pf{padding:60px 0}
+  .pf .rule{display:none}
+  .pf.b .cols,.pf.a .cols{grid-template-columns:1fr;row-gap:40px;padding:0 20px}
+  .pf .col{border:var(--bw) solid #000 !important;padding:20px;min-height:0}
+  .pf .col::before,.pf .col::after{display:none}
+  .pf .c1{display:flex;flex-direction:column;gap:24px}
+  .nm,.kw,.card,.blk,.nav{position:static;width:auto;transform:none;margin:0;height:auto !important}
+  .nm{display:inline-block;align-self:flex-start;font-size:48px}
+  .kw{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .kw span{font-size:26px}
+  .card{width:100%;flex-wrap:wrap}
+  .blk{position:relative;top:auto !important;margin-top:24px;padding-top:70px}
+  .pf .lab{position:static;display:inline-block;margin-top:24px}
+  .blk .hj{font-size:80px}
+  .desc{padding:0}
+  .nav{display:inline-flex;height:64px;font-size:34px;align-self:flex-end}
+  .nav svg{width:70px}
+  #narrative{padding:90px 16px 0 16px}
+  .tl{grid-template-columns:1fr}
+  .tl .line{display:none}
+  .ch .head,.ch .body,.ch .side,.ch .talk{grid-column:1}
+  .ch .node{display:none}
+  .ch .note::after{display:none}
+  .ch .note{min-height:0}
+  .ch .note .nc{position:static;display:block;transform:none;margin:0 0 8px}
+  .ch .note .nc:hover{transform:scale(1.25)}
+  .ch .note:not(.open) .nb{display:none}
+  .ch .side{order:1}
+  .ch .bub{max-width:88%}
+}
+</style>
+</head>
+<body>
+<svg class="svgdefs" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter></svg>
+
+<section id="oath" class="screen"></section>
+<section id="main" class="screen"></section>
+<section id="profile" class="screen"></section>
+<section id="narrative" class="screen"></section>
+<section id="tmi" class="screen"></section>
+
+<script src="narrative-data.js" onerror="window.__dataMissing=1"></script>
+<script>
+if(!window.DATA){ const miss=window.__dataMissing; document.body.innerHTML=`<div style="position:fixed;inset:0;display:grid;place-items:center;background:#222;color:#eee;font:14px/1.8 monospace;padding:24px;text-align:center"><div>${miss?'narrative-data.js 파일을 찾지 못했어요.<br><span style="opacity:.6">narrative.html 과 같은 폴더에 있는지 확인해주세요.</span>':'narrative-data.js 에 문법 오류가 있어요.<br><span style="opacity:.6">VS Code 로 열면 틀린 곳에 빨간 밑줄이 보여요.</span>'}</div></div>`; throw new Error('DATA missing'); }
+const D=window.DATA, $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ret=`<a class="ret" href="#main">${esc(D.ui.back)}</a>`;
+
+/* ---------- 1. 보안서약서 ---------- */
+function renderOath(){
+  const o=D.oath;
+  const arts=o.articles.map(a=>`<div class="art"><h3>${esc(a.h)}</h3>${a.p?`<p>${esc(a.p)}</p>`:''}${a.items?`<ol>${a.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ol>`:''}</div>`).join('');
+  $('#oath').innerHTML=`<div class="paper"><div class="in">
+    <p class="form">${esc(o.form)}</p>
+    <div class="box">
+      <h1>${esc(o.title)}</h1>
+      <p class="intro">${esc(o.intro)}</p>
+      ${arts}
+      <p class="pledge">${o.pledge.map(esc).join('<br>')}</p>
+      <div class="sig">
+        <p class="date">20<u></u>년 <u></u>월 <u></u>일</p>
+        ${o.fields.map((f,i)=>`<div class="fld"><span>${esc(f)} :</span><i>${i===o.fields.length-1?esc(o.sign):''}</i></div>`).join('')}
+        <p class="to">${esc(o.addressee)}</p>
+        <div class="stamp" id="stamp" aria-hidden="true"><span>${esc(o.stamp)}</span></div>
+      </div>
+    </div></div></div>`;
+  /* 서명란(날짜·소속·직급·성명·서명)을 누르면 도장이 쾅 찍히고 메인으로 */
+  $('#oath .sig').addEventListener('click',()=>{
+    const b=$('#stamp'); if(b.classList.contains('press'))return;
+    b.classList.add('press'); setTimeout(()=>{location.hash='#main';},900);
+  });
+}
+
+/* ---------- 2. 메인 ---------- */
+const DONE_KEY='nv.done';
+const done=()=>{try{return JSON.parse(sessionStorage.getItem(DONE_KEY)||'[]')}catch(e){return[]}};
+const setDone=k=>{const d=done(); if(!d.includes(k))d.push(k); try{sessionStorage.setItem(DONE_KEY,JSON.stringify(d))}catch(e){}};
+function renderMain(){
+  const d=done();
+  $('#main').innerHTML=`<div class="left"><div class="list">${D.main.items.map(it=>`<button class="chk${d.includes(it.go)?' done':''}" data-go="${esc(it.go)}"><span class="bx"><svg viewBox="0 0 44 50"><path d="M6 24 L17 42 L40 4"/></svg></span><span>${esc(it.t)}</span></button>`).join('')}</div></div><div class="right"></div>`;
+  document.querySelectorAll('.chk').forEach(b=>b.addEventListener('click',()=>{
+    const go=b.dataset.go; const was=b.classList.contains('done');
+    b.classList.add('anim'); b.classList.add('done'); setDone(go);
+    setTimeout(()=>{location.hash='#'+go;},was?200:650);
+  }));
+}
+
+/* ---------- 3. 프로필 ---------- */
+const arrowR=`<svg viewBox="0 0 120 40"><path d="M2 20 H112"/><path d="M96 5 L112 20 L96 35"/></svg>`;
+const arrowL=`<svg viewBox="0 0 120 40"><path d="M118 20 H8"/><path d="M24 5 L8 20 L24 35"/></svg>`;
+function card(c){return `<div class="card"><div class="l"><div class="ep">${esc(c.epithet)}</div><div class="kr">${esc(c.kr)}</div></div><div class="r">${c.specs.map(esc).join('<br>')}</div></div>`}
+function blocks(c){return `<div class="blk skill" style="background:${esc(c.skillColor)}"><span class="hj" style="font-size:${c.hanja.length>2?98:126}px;left:${c.hanja.length>2?8:28}px;top:${c.hanja.length>2?10:-2}px">${esc(c.hanja)}</span><div class="tx">${esc(c.skill)}</div></div><div class="blk back"><div class="tx">${esc(c.backstory)}</div></div><span class="lab lab-skill">SKILL</span><span class="lab lab-back">BACKSTORY</span>`}
+function desc(c){return `<div class="desc">${c.desc.map(p=>`<p>${p}</p>`).join('')}</div>`}
+function kw(c){return `<div class="kw">${c.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`}
+function renderProfile(who){
+  const B=D.profile.B, A=D.profile.A;
+  const html= who==='A'
+    ? `<div class="pf a"><div class="rule t"></div><div class="rule b"></div><div class="cols">
+        <div class="col c1">${desc(A)}<a class="nav" href="#profile">${arrowL}<span>${esc(A.prev)}</span></a></div>
+        <div class="col c2">${card(A)}${blocks(A)}</div>
+        <div class="col c3"><div class="nm">${esc(A.name)}</div>${kw(A)}</div>
+      </div></div>`
+    : `<div class="pf b"><div class="rule t"></div><div class="rule b"></div><div class="cols">
+        <div class="col c1"><div class="nm">${esc(B.name)}</div>${kw(B)}</div>
+        <div class="col c2">${card(B)}${blocks(B)}</div>
+        <div class="col c3">${desc(B)}<a class="nav" href="#profile/vance"><span>${esc(B.next)}</span>${arrowR}</a></div>
+      </div></div>`;
+  $('#profile').innerHTML=ret+html;
+  fitBlocks();
+}
+/* SKILL/BACKSTORY 박스가 카드·서로 겹치지 않게 세로 위치를 내용 높이에 맞춤 */
+function fitBlocks(){
+  const col=$('#profile .c2'); if(!col||innerWidth<=1100)return;
+  const cd=col.querySelector('.card'), sk=col.querySelector('.skill'), bk=col.querySelector('.back');
+  sk.style.top=(cd.offsetTop+cd.offsetHeight+20)+'px';
+  bk.style.top=(sk.offsetTop+sk.offsetHeight+26)+'px';
+  col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px';
+  col.querySelector('.lab-back').style.top=(bk.offsetTop+22)+'px';
+  /* 이름 박스와 카드: 높이 맞추고, 서로 겹치면 이름 박스를 밀어냄 */
+  const nm=$('#profile .nm'), pf=$('#profile .pf');
+  if(nm){
+    nm.style.height=cd.style.height='';
+    const h=Math.max(nm.offsetHeight,cd.offsetHeight); nm.style.height=cd.style.height=h+'px';
+    nm.style.top=cd.offsetTop+'px';
+    const n=nm.getBoundingClientRect(), c=cd.getBoundingClientRect(), gap=16;
+    if(pf.classList.contains('b')&&n.right>c.left-gap) nm.style.left=(nm.offsetLeft-(n.right-(c.left-gap)))+'px';
+    if(pf.classList.contains('a')&&n.left<c.right+gap) nm.style.left=(nm.offsetLeft+((c.right+gap)-n.left))+'px';
+  }
+  const need=bk.offsetTop+bk.offsetHeight+24;
+  col.parentElement.style.minHeight=Math.max(innerHeight-160,need)+'px';
+  $('#profile .pf').classList.toggle('tall',need>innerHeight-160);
+}
+addEventListener('resize',()=>{if($('#profile').classList.contains('active'))fitBlocks();});
+
+/* ---------- 4. 서사 ---------- */
+function renderNarrative(){
+  const N=D.narrative;
+  const ch=N.chapters.map((c,ci)=>`<div class="ch">
+    <div class="head rv"><span class="node"></span><span class="no">#${esc(c.no)}</span><span class="tt">${esc(c.title)}</span><span class="d">${esc(c.d)}</span></div>
+    <div class="body rv">${c.body.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+    <div class="side">${(c.notes||[]).map((n,i)=>`<div class="note"><button class="nc" aria-label="${esc(c.no)}-${i+1}"></button><div class="nb"><div class="nn">${esc(c.no)}-${i+1}</div><div class="nn" style="font-weight:700">${esc(n.t)}</div><div class="nt">${esc(n.p)}</div></div></div>`).join('')}</div>
+    <div class="talk">${(c.talk||[]).map(([w,t])=>`<div class="bub rv ${N.side[w]||'left'}">${esc(t)}</div>`).join('')}</div>
+    ${ci<N.chapters.length-1?'<div class="gap"></div>':''}
+  </div>`).join('');
+  $('#narrative').innerHTML=ret+`<div class="tl"><div class="line"></div>${ch}</div>`;
+  /* 작은 원 클릭 → 메모 카드 열고 닫기 */
+  document.querySelectorAll('#narrative .nc').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
+  /* 초록 원에 달린 항목(제목·본문·말풍선)은 화면에 들어올 때 하나씩 등장 */
+  const items=[...document.querySelectorAll('#narrative .rv')]; let queue=[], timer=0;
+  const flush=()=>{timer=0; const b=queue.shift(); if(!b)return; b.classList.add('in'); if(queue.length)timer=setTimeout(flush,140);};
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting&&!e.target.classList.contains('in')){io.unobserve(e.target);queue.push(e.target);if(!timer)timer=setTimeout(flush,60);}});},{rootMargin:'0px 0px -12% 0px'});
+  items.forEach(el=>io.observe(el));
+}
+
+/* ---------- 5. TMI ---------- */
+function renderTmi(){ $('#tmi').innerHTML=ret; }
+
+/* ---------- 라우팅 ---------- */
+function route(){
+  const h=location.hash.replace('#','');
+  const [name,sub]=h.split('/');
+  const id=['main','profile','narrative','tmi'].includes(name)?name:'oath';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+  if(id==='oath')renderOath();
+  if(id==='main')renderMain();
+  if(id==='profile')renderProfile(sub==='vance'?'A':'B');
+  if(id==='narrative')renderNarrative();
+  if(id==='tmi')renderTmi();
+  scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
