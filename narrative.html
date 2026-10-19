@@ -177,8 +177,8 @@ b{font-weight:700}
   .chk .bx svg{left:-4px;top:-17px;width:22px;height:25px}
   .pf{padding:60px 0}
   .pf .rule{display:none}
-  .pf.b .cols,.pf.a .cols{grid-template-columns:1fr;row-gap:40px;padding:0 20px}
-  .pf .col{border:var(--bw) solid #000 !important;padding:20px;min-height:0}
+  .pf.b .cols,.pf.a .cols{grid-template-columns:minmax(0,1fr);row-gap:40px;padding:0 16px;min-height:0 !important}
+  .pf .col{border:var(--bw) solid #000 !important;padding:20px;min-height:0;min-width:0;max-width:100%;overflow:hidden}
   .pf .col::before,.pf .col::after{display:none}
   .pf .c1{display:flex;flex-direction:column;gap:24px}
   .nm,.kw,.card,.blk,.nav{position:static;width:auto;transform:none;margin:0;height:auto !important}
@@ -186,8 +186,10 @@ b{font-weight:700}
   .kw{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
   .kw span{font-size:26px}
   .card{width:100%;flex-wrap:wrap}
-  .blk{position:relative;top:auto !important;margin-top:24px;padding-top:70px}
-  .pf .lab{position:static;display:inline-block;margin-top:24px}
+  .blk{position:relative;top:auto !important;left:auto;right:auto;width:100%;margin-top:24px;padding-top:70px}
+  .card{min-width:0}
+  body{overflow-x:hidden}
+  .pf .lab{position:absolute;left:4px;font-size:18px}
   .blk .hj{font-size:80px}
   .desc{padding:0}
   .nav{display:inline-flex;height:64px;font-size:34px;align-self:flex-end}
@@ -287,8 +289,9 @@ function renderProfile(who){
 }
 /* SKILL/BACKSTORY 박스가 카드·서로 겹치지 않게 세로 위치를 내용 높이에 맞춤 */
 function fitBlocks(){
-  const col=$('#profile .c2'); if(!col||innerWidth<=1100)return;
+  const col=$('#profile .c2'); if(!col)return;
   const cd=col.querySelector('.card'), sk=col.querySelector('.skill'), bk=col.querySelector('.back');
+  if(innerWidth<=1100){ col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px'; col.querySelector('.lab-back').style.top=(bk.offsetTop+22)+'px'; return; }
   sk.style.top=(cd.offsetTop+cd.offsetHeight+20)+'px';
   bk.style.top=(sk.offsetTop+sk.offsetHeight+26)+'px';
   col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px';
