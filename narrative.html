@@ -90,7 +90,7 @@ html{scrollbar-width:thin;scrollbar-color:#111 transparent}
 
 /* ---------- 3. 프로필 ---------- */
 .pf{--z:.9;position:relative;min-height:calc(100vh / var(--z));padding:80px 0 80px;zoom:var(--z)}
-.pf .rule{position:absolute;left:0;right:0;height:var(--bw);background:#000}
+.pf .rule{display:none}
 .pf .rule.t{top:80px}
 .pf .rule.b{bottom:80px}
 .pf .cols{display:grid;min-height:calc(100vh / var(--z) - 160px)}
@@ -102,6 +102,8 @@ html{scrollbar-width:thin;scrollbar-color:#111 transparent}
 .pf.a .c1{border-left:0}
 .pf.a .c3{border-right:0}
 .pf .col::before,.pf .col::after{content:'';position:absolute;left:-2px;right:-2px;height:var(--bw);background:#000}
+.pf.b .c1::before,.pf.b .c1::after,.pf.a .c1::before,.pf.a .c1::after{left:-100vw}
+.pf.b .c3::before,.pf.b .c3::after,.pf.a .c3::before,.pf.a .c3::after{right:-100vw}
 .pf .col::before{top:0}
 .pf .col::after{bottom:0}
 .pf .art{position:absolute;top:-80px;height:calc(100% + 80px);width:auto;object-fit:cover;object-position:top center;z-index:1;pointer-events:none;user-select:none}
@@ -125,7 +127,7 @@ html{scrollbar-width:thin;scrollbar-color:#111 transparent}
 .card .r{font-size:14px;line-height:1.72;font-weight:600;white-space:nowrap}
 .blk{position:absolute;left:22px;right:24px;color:#fff;border:var(--bw) solid #000;padding:72px 24px 26px;font-size:16px;line-height:1.7;font-weight:500;z-index:1;overflow:hidden}
 .blk.skill{top:168px}
-.blk.back{top:500px;background:var(--dark);padding-top:70px}
+.blk.back{top:500px;background:var(--dark)}
 .pf .lab{position:absolute;left:-35px;top:22px;background:#fff;border:var(--bw) solid #000;color:#000;font:700 24px/1 var(--grot);font-stretch:expanded;padding:9px 14px 8px;letter-spacing:-.05em;z-index:4}
 .blk .hj{position:absolute;left:28px;top:-2px;font:900 126px/1 var(--serif);letter-spacing:-.05em;color:rgba(0,0,0,.62);white-space:nowrap;pointer-events:none;z-index:0}
 .blk .tx{position:relative;z-index:1}
@@ -145,7 +147,7 @@ html{scrollbar-width:thin;scrollbar-color:#111 transparent}
 .pf.tall.a .nav{left:18px}
 
 /* ---------- 4. 서사 ---------- */
-#narrative{--z:.5;min-height:calc(100vh / var(--z));padding:150px 40px 0 40px;zoom:var(--z)}
+#narrative{--z:.5;min-height:calc(100vh / var(--z));padding:320px 40px 0 40px;zoom:var(--z)}  /* 위 여백: 배율 50%라 실제 160px */
 .tl{position:relative;display:grid;grid-template-columns:377px 148px minmax(0,952px);row-gap:0;width:1477px;max-width:100%;margin:0 auto}
 .tl .line{position:absolute;left:calc(377px + 74px - 2px);top:28px;bottom:0;width:4px;background:#000}
 .ch{display:contents}
@@ -223,7 +225,7 @@ html{scrollbar-width:thin;scrollbar-color:#111 transparent}
   .pf.b .c3 .desc,.pf.a .c1 .desc{margin-bottom:24px}
   .nav svg{width:50px}
   /* 모바일 서사: 왼쪽에 타임라인 바, 큰 점은 제목 옆, 작은 점은 본문 아래 */
-  #narrative{--z:1;zoom:1;padding:90px 16px 0 72px}  /* 왼쪽 여백: 바 위치 40px */
+  #narrative{--z:1;zoom:1;padding:120px 16px 0 72px}  /* 왼쪽 여백: 바 위치 40px */
   .tl{grid-template-columns:1fr;width:auto}
   .tl .line{display:block;left:-32px;top:12px;bottom:0;width:3px;transform:translateX(-50%)}
   .ch .head,.ch .body,.ch .side,.ch .talk{grid-column:1}
@@ -343,12 +345,14 @@ function fitArt(){
 function fitBlocks(){
   const col=$('#profile .c2'); if(!col)return;
   const cd=col.querySelector('.card'), sk=col.querySelector('.skill'), bk=col.querySelector('.back');
-  if(innerWidth<=1100){ col.querySelector('.lab-skill').style.top=(sk.offsetTop+20)+'px'; col.querySelector('.lab-back').style.top=(bk.offsetTop+20)+'px'; document.querySelectorAll('#profile .nm,#profile .card').forEach(e=>{e.style.height='';e.style.left='';e.style.top='';}); return; }
+  if(innerWidth<=1100){ [['.lab-skill',sk],['.lab-back',bk]].forEach(([q,b])=>{const l=col.querySelector(q); b.style.paddingTop=(l.offsetHeight+27-b.clientTop)+'px'; l.style.top=(b.offsetTop+13.5)+'px';}); document.querySelectorAll('#profile .nm,#profile .card').forEach(e=>{e.style.height='';e.style.left='';e.style.top='';}); col.querySelectorAll('.lab').forEach(l=>l.style.left=''); return; }
   if(!cd||cd.parentElement!==col)return;
   sk.style.top=(cd.offsetTop+cd.offsetHeight+20)+'px';
   bk.style.top=(sk.offsetTop+sk.offsetHeight+26)+'px';
-  col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px';
-  col.querySelector('.lab-back').style.top=(bk.offsetTop+22)+'px';
+  /* 라벨은 색 박스 왼쪽 선 위에 가운데 정렬 */
+  /* 세로: 색 박스 윗선과 본문 첫 줄 사이의 가운데 */
+  /* 박스 윗선 → 라벨 13.5px, 라벨 → 본문 13.5px (두 박스 동일) */
+  [['.lab-skill',sk],['.lab-back',bk]].forEach(([q,b])=>{const l=col.querySelector(q); b.style.paddingTop=(l.offsetHeight+27-b.clientTop)+'px'; l.style.top=(b.offsetTop+13.5)+'px'; l.style.left='';});
   /* 이름 박스와 카드: 높이 맞추고, 서로 겹치면 이름 박스를 밀어냄 */
   const nm=$('#profile .nm'), pf=$('#profile .pf');
   if(nm){
