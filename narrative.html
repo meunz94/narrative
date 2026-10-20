@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>narrative</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,900&family=Manrope:wght@800&family=Inter+Tight:wght@700;800&family=IBM+Plex+Mono:wght@500;600&family=Noto+Serif+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,700;125,900&family=IBM+Plex+Mono:wght@500;600&family=Noto+Serif+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 /* =====================================================================
@@ -16,29 +16,38 @@
   --ink:#111; --paper:#fcfcfc; --gray:#d9d9d9; --dark:#2a2a2a;
   --green:#1cf52b; --red:#c8231f;
   --kr:'SF Pro Text','SF Pro',-apple-system,system-ui,'Apple SD Gothic Neo','Pretendard','Malgun Gothic',sans-serif;
-  --grot:'SF Pro Display','SF Pro','Archivo','Manrope','Inter Tight',Arial,sans-serif;  /* SF Pro 없는 기기는 Archivo Expanded. font-stretch:expanded */
-  --cap:'SF Pro Display','SF Pro','Archivo','Inter Tight','Manrope',Arial,sans-serif;
+  --grot:'SF Pro Display','SF Pro',-apple-system,BlinkMacSystemFont,'Archivo',Arial,sans-serif;  /* Mac/iOS = 시스템 SF(Expanded), 그 외 = Archivo Expanded */
+  --cap:'SF Pro Display','SF Pro',-apple-system,BlinkMacSystemFont,'Archivo',Arial,sans-serif;
   --mono:'SF Mono',ui-monospace,'IBM Plex Mono',Menlo,monospace;
   --serif:'Noto Serif KR','Apple Myungjo','Batang',serif;
   --bw:2px;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:#fff;color:var(--ink);font-family:var(--kr);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:normal;overflow-wrap:break-word}
+body{background:#fff;color:var(--ink);font-family:var(--kr);font-size:16px;line-height:1.6;letter-spacing:-.05em;-webkit-font-smoothing:antialiased;word-break:normal;overflow-wrap:break-word}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 b{font-weight:700}
 .dim{color:#8a8a8a}
 .screen{display:none}
 .screen.active{display:block}
-.ret{position:fixed;top:22px;left:24px;z-index:20;font:600 12px/1 var(--mono);letter-spacing:.14em;padding:6px 8px;opacity:.55;transition:opacity .2s}
-.ret:hover{opacity:1}
+/* 스크롤바: 가는 검정 막대, 트랙 없음 */
+html{scrollbar-width:thin;scrollbar-color:#111 transparent}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#111;border-radius:0}
+::-webkit-scrollbar-thumb:hover{background:#444}
+::-webkit-scrollbar-button{display:none;width:0;height:0}
+.ret{position:fixed;top:20px;left:20px;z-index:20;zoom:calc(1 / var(--z, 1));width:44px;height:44px;border:var(--bw) solid #000;border-radius:50%;background:#fff;display:grid;place-items:center;transition:background .2s}
+.ret svg{width:22px;height:22px}
+.ret svg *{stroke:#000;stroke-width:2.2;vector-effect:non-scaling-stroke;fill:none;stroke-linecap:square}
+.ret:hover{background:#f2f2f2}
 
 /* ---------- 1. 랜딩 : 보안서약서 ---------- */
-#oath{background:#222;min-height:100vh;padding:31vh 16px 14vh}
+#oath{background:#fff;letter-spacing:0;min-height:100vh;padding:22vh 16px 14vh}
 /* 종이 폭 = 화면의 약 36% (최소 340px). 안의 글자는 종이 폭에 비례(cqw) */
-.paper{width:clamp(min(92vw,560px),36vw,720px);margin:0 auto;background:var(--paper);container-type:inline-size;color:#000;font-family:var(--serif)}
-.paper .in{padding:11cqw 11cqw 11cqw;font-size:max(1.32cqw,9.5px);line-height:1.45}
+.paper{width:clamp(min(92vw,560px),60vw,1200px);margin:0 auto;background:#fff;container-type:inline-size;color:#000;font-family:var(--serif)}
+.paper .in{padding:4cqw 3cqw 8cqw;font-size:max(1.32cqw,9.5px);line-height:1.45}
 .paper .form{font-weight:700;font-size:max(1.36cqw,9.5px);margin:0 0 1cqw}
 .paper .box{border:1.5px solid #000;padding:5.6cqw 4.3cqw 5.4cqw}
 .paper h1{margin:0 0 70px;text-align:center;font-family:var(--kr);font-stretch:expanded;font-weight:700;font-size:5.6cqw;letter-spacing:.18em;line-height:1}
@@ -50,14 +59,14 @@ b{font-weight:700}
 .paper ol{margin:0;padding:0;list-style:none;counter-reset:n}
 .paper ol li{counter-increment:n;padding-left:2.6em;position:relative}
 .paper ol li::before{content:counter(n) '.';position:absolute;left:1.3em}
-.paper .pledge{margin:4.3cqw 0 6.3cqw;text-align:center;font-weight:700;font-size:max(1.45cqw,10px);line-height:1.5}
+.paper .pledge{margin:4.3cqw auto 6.3cqw;max-width:82%;text-align:center;font-weight:700;font-size:max(1.45cqw,10px);line-height:1.6;word-break:keep-all}
 .paper .sig{width:min(100%,24em);margin-left:auto;position:relative;cursor:pointer}
 .paper .date{text-align:center;margin-bottom:2.4em;white-space:nowrap}
 .paper .date u{display:inline-block;width:4em;text-decoration:none;border-bottom:1px solid #000;height:1em;vertical-align:bottom}
 .paper .fld{display:grid;grid-template-columns:8.2em 1fr;align-items:end;margin-bottom:.35em}
 .paper .fld span{text-align:right;padding-right:6px;white-space:nowrap}
 .paper .fld i{display:block;border-bottom:1px solid #000;height:1.2em;font-style:normal;text-align:right;font-size:.9em;color:#333}
-.paper .to{margin-top:2.2em;font-weight:700;font-size:1.04em;text-align:right;padding-right:2.3em}
+.paper .to{margin-top:3.2em;font-weight:700;font-size:1.04em;text-align:left}
 .stamp{position:absolute;right:1.8em;bottom:-.4em;width:7.7em;height:7.7em;border-radius:50%;border:.28em solid var(--red);color:var(--red);display:grid;place-items:center;font-family:var(--kr);font-weight:800;font-size:1em;letter-spacing:-.04em;line-height:1;transform:rotate(-28deg);mix-blend-mode:multiply;opacity:0;filter:url(#rough);pointer-events:none;user-select:none;visibility:hidden}
 .stamp span{font-size:3.7em}
 .stamp.press{visibility:visible;animation:press .55s cubic-bezier(.2,1.2,.4,1) forwards}
@@ -66,25 +75,25 @@ b{font-weight:700}
 .svgdefs{position:absolute;width:0;height:0;overflow:hidden}
 
 /* ---------- 2. 메인 : 체크리스트 + 서류 ---------- */
-#main{position:fixed;inset:0;grid-template-columns:39.6% 1fr;overflow:hidden}
+#main{position:fixed;inset:0;letter-spacing:0;grid-template-columns:1fr;overflow:hidden}
 #main.active{display:grid}
 #main .left{background:#fdfdfd;position:relative}
-#main .list{position:absolute;left:31%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:170px}
-.chk{display:flex;align-items:center;gap:28px;font:700 28px/1 var(--cap);font-stretch:expanded;letter-spacing:.01em;position:relative;text-align:left}
-.chk .bx{position:relative;width:24px;height:24px;border:var(--bw) solid #000;flex:none}
-.chk .bx svg{position:absolute;left:-7px;top:-34px;width:44px;height:50px;overflow:visible}
+#main .list{position:absolute;left:12.3%;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:120px}
+.chk{display:flex;align-items:center;gap:20px;font:700 20px/1 var(--cap);font-stretch:expanded;letter-spacing:.01em;position:relative;text-align:left}
+.chk .bx{position:relative;width:17px;height:17px;border:var(--bw) solid #000;flex:none}
+.chk .bx svg{position:absolute;left:-5px;top:-24px;width:31px;height:35px;overflow:visible}
 .chk .bx path{fill:none;stroke:var(--green);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:70;stroke-dashoffset:70}
 .chk.done .bx path{stroke-dashoffset:0}
 .chk.anim .bx path{transition:stroke-dashoffset .38s cubic-bezier(.3,.9,.4,1)}
 .chk:hover .bx{background:#f0f0f0}
-#main .right{background:var(--gray);position:relative;overflow:hidden}
+#main .right{display:none}
 
 /* ---------- 3. 프로필 ---------- */
-.pf{position:relative;min-height:100vh;padding:80px 0 80px}
+.pf{--z:.9;position:relative;min-height:calc(100vh / var(--z));padding:80px 0 80px;zoom:var(--z)}
 .pf .rule{position:absolute;left:0;right:0;height:var(--bw);background:#000}
 .pf .rule.t{top:80px}
 .pf .rule.b{bottom:80px}
-.pf .cols{display:grid;min-height:calc(100vh - 160px)}
+.pf .cols{display:grid;min-height:calc(100vh / var(--z) - 160px)}
 .pf.b .cols{grid-template-columns:39.3% 24% 30.7%;column-gap:2.1%}
 .pf.a .cols{grid-template-columns:32.5% 23.8% 1fr;column-gap:2.1%}
 .pf .col{position:relative;border:var(--bw) solid #000;border-top:0;border-bottom:0}
@@ -95,32 +104,38 @@ b{font-weight:700}
 .pf .col::before,.pf .col::after{content:'';position:absolute;left:-2px;right:-2px;height:var(--bw);background:#000}
 .pf .col::before{top:0}
 .pf .col::after{bottom:0}
-.nm{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;padding:0 22px;display:flex;align-items:center;font:900 clamp(40px,4.4vw,90px)/1.2 var(--grot);font-stretch:expanded;letter-spacing:-.01em;white-space:nowrap}
+.pf .art{position:absolute;top:-80px;height:calc(100% + 80px);width:auto;object-fit:cover;object-position:top center;z-index:1;pointer-events:none;user-select:none}
+.pf.b .art{left:var(--ix,80px)}
+.pf.a .art{right:var(--ix,14px)}
+.kw{z-index:2}
+.nm{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;padding:0 22px;display:flex;align-items:center;font:900 90px/1.2 var(--grot);font-stretch:expanded;letter-spacing:-.03em;white-space:nowrap}
 .pf.b .nm{top:32px;left:76%}
 .pf.a .nm{top:32px;left:-20%}
-.kw{position:absolute;display:flex;flex-direction:column;gap:14px;width:215px}
-.pf.b .kw{left:67%;bottom:24px}
+.kw{position:absolute;z-index:2;display:flex;flex-direction:column;gap:14px;width:215px}
+.pf.b .kw{right:24px;bottom:24px}
 .pf.a .kw{left:9%;bottom:30px}
-.kw span{display:block;border:var(--bw) solid #000;height:60px;line-height:56px;text-align:center;font-size:38px;font-weight:600;letter-spacing:-.03em;white-space:nowrap;background:#fff}
-.card{position:absolute;top:32px;border:var(--bw) solid #000;background:#fff;padding:22px 24px 20px 24px;display:flex;gap:22px;align-items:center;z-index:2}
+.kw span{display:block;border:var(--bw) solid #000;height:60px;line-height:56px;text-align:center;font-size:38px;font-weight:600;letter-spacing:-.05em;white-space:nowrap;background:#fff}
+.card{position:absolute;top:32px;border:var(--bw) solid #000;background:#fff;padding:22px 24px;display:flex;gap:34px;align-items:center;z-index:2}
+.card .l{text-align:center;display:flex;flex-direction:column;justify-content:center;align-self:center}
+.card .r{align-self:center}
 .pf.b .card{right:24px;width:68%;min-width:max-content}
 .pf.a .card{left:22px;width:68%;min-width:max-content}
 .card .l .ep{font-size:14px;color:#8a8a8a;font-weight:600;white-space:nowrap;margin-bottom:2px}
-.card .l .kr{font-size:36px;font-weight:700;line-height:1;letter-spacing:-.03em;white-space:nowrap}
-.card .r{font-size:14px;line-height:1.72;padding-top:2px;font-weight:500;white-space:nowrap}
+.card .l .kr{font-size:36px;font-weight:900;line-height:1;letter-spacing:-.05em;white-space:nowrap}
+.card .r{font-size:14px;line-height:1.72;font-weight:600;white-space:nowrap}
 .blk{position:absolute;left:22px;right:24px;color:#fff;border:var(--bw) solid #000;padding:72px 24px 26px;font-size:16px;line-height:1.7;font-weight:500;z-index:1;overflow:hidden}
 .blk.skill{top:168px}
 .blk.back{top:500px;background:var(--dark);padding-top:70px}
-.pf .lab{position:absolute;left:-35px;top:22px;background:#fff;border:var(--bw) solid #000;color:#000;font:700 24px/1 var(--grot);font-stretch:expanded;padding:9px 14px 8px;letter-spacing:0;z-index:4}
-.blk .hj{position:absolute;left:28px;top:-2px;font:900 126px/1 var(--serif);letter-spacing:-.06em;color:rgba(0,0,0,.62);white-space:nowrap;pointer-events:none;z-index:0}
+.pf .lab{position:absolute;left:-35px;top:22px;background:#fff;border:var(--bw) solid #000;color:#000;font:700 24px/1 var(--grot);font-stretch:expanded;padding:9px 14px 8px;letter-spacing:-.05em;z-index:4}
+.blk .hj{position:absolute;left:28px;top:-2px;font:900 126px/1 var(--serif);letter-spacing:-.05em;color:rgba(0,0,0,.62);white-space:nowrap;pointer-events:none;z-index:0}
 .blk .tx{position:relative;z-index:1}
 .desc{padding:38px 44px 120px;font-size:16px;line-height:1.62;font-weight:500}
 .pf.b .desc{padding-right:140px}
 .pf.a .desc{padding-left:29%;padding-right:40px}
 .desc p{margin:0 0 26px}
-.nav{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;display:flex;align-items:center;gap:34px;padding:0 26px;height:80px;font:900 clamp(34px,3.3vw,64px)/1 var(--grot);font-stretch:expanded;letter-spacing:-.01em;white-space:nowrap}
+.nav{position:absolute;z-index:3;background:#fff;border:var(--bw) solid #000;display:flex;align-items:center;gap:34px;padding:0 26px;height:80px;font:900 64px/1 var(--grot);font-stretch:expanded;letter-spacing:-.03em;white-space:nowrap}
 .nav svg{width:120px;height:40px;flex:none}
-.nav svg *{stroke:#000;stroke-width:3;fill:none;stroke-linecap:square}
+.nav svg *{stroke:#000;stroke-width:2.2;vector-effect:non-scaling-stroke;fill:none;stroke-linecap:square}
 .pf.b .nav{right:-6px;bottom:-14px}
 .pf.a .nav{left:50px;bottom:-28px}
 .pf .nav:hover{background:#f2f2f2}
@@ -130,23 +145,23 @@ b{font-weight:700}
 .pf.tall.a .nav{left:18px}
 
 /* ---------- 4. 서사 ---------- */
-#narrative{min-height:100vh;padding:150px 40px 0 85px}
-.tl{position:relative;display:grid;grid-template-columns:377px 148px minmax(0,952px);row-gap:0}
+#narrative{--z:.5;min-height:calc(100vh / var(--z));padding:150px 40px 0 40px;zoom:var(--z)}
+.tl{position:relative;display:grid;grid-template-columns:377px 148px minmax(0,952px);row-gap:0;width:1477px;max-width:100%;margin:0 auto}
 .tl .line{position:absolute;left:calc(377px + 74px - 2px);top:28px;bottom:0;width:4px;background:#000}
 .ch{display:contents}
 .ch .head{grid-column:3;display:flex;align-items:center;gap:22px;min-height:56px;margin-bottom:28px;position:relative}
-.ch .head .no{font:600 28px/1 var(--mono);letter-spacing:-.02em}
-.ch .head .tt{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1}
-.ch .head .d{margin-left:auto;border:var(--bw) solid #000;border-radius:30px;background:var(--green);font:600 16px/1 var(--kr);padding:7px 20px 6px;letter-spacing:-.02em}
+.ch .head .no{font:600 28px/1 var(--mono);letter-spacing:-.05em}
+.ch .head .tt{font-size:30px;font-weight:800;letter-spacing:-.05em;line-height:1}
+.ch .head .d{margin-left:auto;border:var(--bw) solid #000;border-radius:30px;background:var(--green);font:600 16px/1 var(--kr);padding:7px 20px 6px;letter-spacing:-.05em}
 .ch .node{position:absolute;left:-74px;top:9px;width:37px;height:37px;border-radius:50%;background:var(--green);border:3px solid #000;transform:translateX(-50%)}
-.ch .body{grid-column:3;border:var(--bw) solid #000;border-radius:6px;padding:26px 44px;font-size:17px;line-height:1.7;font-weight:500;margin-bottom:28px}
+.ch .body{grid-column:3;border:var(--bw) solid #000;border-radius:6px;padding:26px 44px;font-size:24px;line-height:1.7;font-weight:500;margin-bottom:28px}
 .ch .body p{margin:0 0 1em}
 .ch .body p:last-child{margin:0}
 .ch .side{grid-column:1;display:flex;flex-direction:column;gap:30px;padding-bottom:40px}
 .ch .note{position:relative;min-height:142px}
 .ch .note .nb{border:var(--bw) solid #000;border-radius:24px;padding:26px 28px;min-height:142px;background:#fff;opacity:0;transform:translateX(16px);transition:opacity .3s,transform .3s;pointer-events:none}
 .ch .note.open .nb{opacity:1;transform:none;pointer-events:auto}
-.ch .note .nn{font-size:17px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.ch .note .nn{font-size:17px;font-weight:800;letter-spacing:-.05em;line-height:1.2}
 .ch .note .nt{font-size:15px;font-weight:500;margin-top:2px}
 .ch .note::after{content:'';position:absolute;left:100%;top:50%;width:62px;border-top:1.5px dotted #333;opacity:0;transition:opacity .3s}
 .ch .note.open::after{opacity:1}
@@ -159,9 +174,9 @@ b{font-weight:700}
 .ch .head .node{transition:transform .4s;transform:translateX(-50%) scale(0)}
 .ch .head.in .node{transform:translateX(-50%) scale(1)}
 .ch .talk{grid-column:3;display:flex;flex-direction:column;gap:14px;padding-bottom:40px;min-height:40px}
-.ch .bub{max-width:68%;border-radius:40px;padding:22px 40px;font-size:17px;font-weight:500;line-height:1.5}
-.ch .bub.left{align-self:flex-start;background:var(--gray);color:#111}
-.ch .bub.right{align-self:flex-end;background:#777;color:#fff}
+.ch .bub{max-width:68%;border-radius:30px;padding:9px 30px;font-size:24px;font-weight:500;line-height:1.5}
+.ch .bub.left{align-self:flex-start;background:var(--gray);color:#111;border-bottom-left-radius:0}
+.ch .bub.right{align-self:flex-end;background:#777;color:#fff;border-bottom-right-radius:0}
 .ch .gap{grid-column:1/-1;height:80px}
 
 /* ---------- 5. TMI ---------- */
@@ -175,39 +190,61 @@ b{font-weight:700}
   .chk{font-size:14px;gap:14px}
   .chk .bx{width:12px;height:12px;border-width:1.5px}
   .chk .bx svg{left:-4px;top:-17px;width:22px;height:25px}
-  .pf{padding:60px 0}
+  .pf{--z:1;padding:88px 0 60px;zoom:1}  /* 위 여백: ← MAIN 과 안 겹치게 */
+  .pf.a .c3{order:1}.pf.a .c2{order:2}.pf.a .c1{order:3}
   .pf .rule{display:none}
   .pf.b .cols,.pf.a .cols{grid-template-columns:minmax(0,1fr);row-gap:40px;padding:0 16px;min-height:0 !important}
   .pf .col{border:var(--bw) solid #000 !important;padding:20px;min-height:0;min-width:0;max-width:100%;overflow:hidden}
   .pf .col::before,.pf .col::after{display:none}
   .pf .c1{display:flex;flex-direction:column;gap:24px}
   .nm,.kw,.card,.blk,.nav{position:static;width:auto;transform:none;margin:0;height:auto !important}
-  .nm{display:inline-block;align-self:flex-start;font-size:48px}
+  .pf .art{top:auto;bottom:0;right:-6px !important;left:auto !important;height:100% !important;width:auto !important;max-width:70%;object-fit:contain;object-position:right bottom}
+  /* 박스 최소 높이 = 이미지(폭 70%)가 꽉 채울 수 있는 높이. 폭이 넓어지면 같이 커지고 화면 높이 85%에서 멈춤 */
+  .pf .c1,.pf .c3{position:relative;justify-content:flex-start;gap:16px}
+  .pf.b .c1,.pf.a .c3{min-height:min(calc(102vw - 78px),85vh)}  /* 이름·이미지 박스에만 적용 */  /* 폭이 넓어지면 박스(=이미지) 높이도 같이 커짐 */
+  .nm,.kw,.card{position:relative;z-index:2;left:auto !important;right:auto !important;top:auto !important;bottom:auto !important}
+  .pf .kw{display:grid;grid-template-columns:repeat(2,max-content);width:max-content;max-width:100%;gap:8px;margin-top:auto;align-self:flex-start}  /* 모바일: 키워드 2×2 */
+  .pf .kw span{height:40px;line-height:36px;font-size:22px;padding:0 14px;letter-spacing:-.05em}
+  .pf .card{width:max-content !important;max-width:100% !important;min-width:0 !important;padding:10px 12px;gap:18px;align-self:flex-start}
+  .nm{display:inline-block;align-self:flex-start;font-size:min(48px,10vw);max-width:100%}
   .c1 .card,.c3 .card{margin-top:0}
+  .card .l .ep{font-size:11px}
+  .card .l .kr{font-size:22px}
+  .card .r{font-size:11px;line-height:1.6}
   .c3{display:flex;flex-direction:column;gap:24px}
-  .kw{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
-  .kw span{font-size:26px}
-  .card{width:100%;flex-wrap:wrap}
-  .blk{position:relative;top:auto !important;left:auto;right:auto;width:100%;margin-top:24px;padding-top:70px}
-  .card{min-width:0}
+  .blk{position:relative;top:auto !important;left:auto;right:auto;width:100%;margin-top:20px;padding:64px 24px 22px}
   body{overflow-x:hidden}
-  .pf .lab{position:absolute;left:4px;font-size:18px}
+  .pf .lab{position:absolute;left:46px;font-size:16px;padding:7px 10px 6px}  /* 모바일: 색 박스 안, 본문과 같은 왼쪽 선 */
+  .c2 .blk:first-of-type{margin-top:0}
   .blk .hj{font-size:80px}
   .desc{padding:0 !important}
-  .nav{display:inline-flex;height:64px;font-size:34px;align-self:flex-end}
-  .nav svg{width:70px}
-  #narrative{padding:90px 16px 0 16px}
-  .tl{grid-template-columns:1fr}
-  .tl .line{display:none}
+  .pf .nav,.pf.tall .nav{position:static;display:inline-flex;height:52px;font-size:26px;align-self:flex-end;gap:16px;padding:0 16px;max-width:100%;margin-top:auto}  /* 모바일: 화면 고정 해제, 박스 바닥에 붙음 */
+  .pf.b .c3,.pf.a .c1{display:flex;flex-direction:column}
+  .pf.b .c3 .desc,.pf.a .c1 .desc{margin-bottom:24px}
+  .nav svg{width:50px}
+  /* 모바일 서사: 왼쪽에 타임라인 바, 큰 점은 제목 옆, 작은 점은 본문 아래 */
+  #narrative{--z:1;zoom:1;padding:90px 16px 0 72px}  /* 왼쪽 여백: 바 위치 40px */
+  .tl{grid-template-columns:1fr;width:auto}
+  .tl .line{display:block;left:-32px;top:12px;bottom:0;width:3px;transform:translateX(-50%)}
   .ch .head,.ch .body,.ch .side,.ch .talk{grid-column:1}
-  .ch .node{display:none}
+  .ch .head{min-height:0;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .ch .head .tt{font-size:22px}
+  .ch .head .no{font-size:20px}
+  .ch .node{display:block;left:-32px;top:2px;width:22px;height:22px}
+  .ch .body{padding:18px 20px;margin-bottom:16px;font-size:17px}
+  .ch .head,.ch .body,.ch .talk,.ch .side,.ch .gap{order:var(--o)}  /* 모바일 순서: 제목→본문→말풍선→작은 점 */
+  .ch .side{gap:12px;padding:8px 0 16px}
+  .ch .talk{padding-bottom:8px}
+  .ch .note{min-height:18px}
   .ch .note::after{display:none}
-  .ch .note{min-height:0}
-  .ch .note .nc{position:static;display:block;transform:none;margin:0 0 8px}
-  .ch .note .nc:hover{transform:scale(1.25)}
+  .ch .note .nc{left:-32px;top:9px;width:18px;height:18px;transform:translate(-50%,-50%)}
+  .ch .note .nc:hover{transform:translate(-50%,-50%) scale(1.25)}
   .ch .note:not(.open) .nb{display:none}
-  .ch .side{order:1}
-  .ch .bub{max-width:88%}
+  .ch .note .nb{padding:16px 18px;min-height:0;border-radius:16px;transform:none}
+  .ch .bub{max-width:88%;padding:6px 18px;font-size:15px;border-radius:22px}
+  .ch .bub.left{border-bottom-left-radius:0}
+  .ch .bub.right{border-bottom-right-radius:0}
+  .ch .gap{height:48px}
 }
 </style>
 </head>
@@ -225,7 +262,7 @@ b{font-weight:700}
 if(!window.DATA){ const miss=window.__dataMissing; document.body.innerHTML=`<div style="position:fixed;inset:0;display:grid;place-items:center;background:#222;color:#eee;font:14px/1.8 monospace;padding:24px;text-align:center"><div>${miss?'narrative-data.js 파일을 찾지 못했어요.<br><span style="opacity:.6">narrative.html 과 같은 폴더에 있는지 확인해주세요.</span>':'narrative-data.js 에 문법 오류가 있어요.<br><span style="opacity:.6">VS Code 로 열면 틀린 곳에 빨간 밑줄이 보여요.</span>'}</div></div>`; throw new Error('DATA missing'); }
 const D=window.DATA, $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
-const ret=`<a class="ret" href="#main">${esc(D.ui.back)}</a>`;
+const ret=`<a class="ret" href="#main" aria-label="${esc(D.ui.back)}" title="${esc(D.ui.back)}"><svg viewBox="0 0 22 22"><path d="M19 11 H4"/><path d="M10 4 L3 11 L10 18"/></svg></a>`;
 
 /* ---------- 1. 보안서약서 ---------- */
 function renderOath(){
@@ -241,11 +278,11 @@ function renderOath(){
       <div class="sig">
         <p class="date">20<u></u>년 <u></u>월 <u></u>일</p>
         ${o.fields.map((f,i)=>`<div class="fld"><span>${esc(f)} :</span><i>${i===o.fields.length-1?esc(o.sign):''}</i></div>`).join('')}
-        <p class="to">${esc(o.addressee)}</p>
         <div class="stamp" id="stamp" aria-hidden="true"><span>${esc(o.stamp)}</span></div>
       </div>
+      <p class="to">${esc(o.addressee)}</p>
     </div></div></div>`;
-  /* 서명란(날짜·소속·직급·성명·서명)을 누르면 도장이 쾅 찍히고 메인으로 */
+  /* 화면 전환 이벤트 */
   $('#oath .sig').addEventListener('click',()=>{
     const b=$('#stamp'); if(b.classList.contains('press'))return;
     b.classList.add('press'); setTimeout(()=>{location.hash='#main';},900);
@@ -273,31 +310,40 @@ function card(c){return `<div class="card"><div class="l"><div class="ep">${esc(
 function blocks(c){return `<div class="blk skill" style="background:${esc(c.skillColor)}"><span class="hj" style="font-size:${c.hanja.length>2?98:126}px;left:${c.hanja.length>2?8:28}px;top:${c.hanja.length>2?10:-2}px">${esc(c.hanja)}</span><div class="tx">${esc(c.skill)}</div></div><div class="blk back"><div class="tx">${esc(c.backstory)}</div></div><span class="lab lab-skill">SKILL</span><span class="lab lab-back">BACKSTORY</span>`}
 function desc(c){return `<div class="desc">${c.desc.map(p=>`<p>${p}</p>`).join('')}</div>`}
 function kw(c){return `<div class="kw">${c.keywords.map(k=>`<span>${esc(k)}</span>`).join('')}</div>`}
+function art(c){return c.img?`<img class="art" src="${encodeURI(c.img)}" alt="" style="--ix:${c.imgX||0}px">`:''}
 function renderProfile(who){
   const B=D.profile.B, A=D.profile.A;
   const html= who==='A'
     ? `<div class="pf a"><div class="rule t"></div><div class="rule b"></div><div class="cols">
         <div class="col c1">${desc(A)}<a class="nav" href="#profile">${arrowL}<span>${esc(A.prev)}</span></a></div>
         <div class="col c2">${card(A)}${blocks(A)}</div>
-        <div class="col c3"><div class="nm">${esc(A.name)}</div>${kw(A)}</div>
+        <div class="col c3">${art(A)}<div class="nm">${esc(A.name)}</div>${kw(A)}</div>
       </div></div>`
     : `<div class="pf b"><div class="rule t"></div><div class="rule b"></div><div class="cols">
-        <div class="col c1"><div class="nm">${esc(B.name)}</div>${kw(B)}</div>
+        <div class="col c1">${art(B)}<div class="nm">${esc(B.name)}</div>${kw(B)}</div>
         <div class="col c2">${card(B)}${blocks(B)}</div>
         <div class="col c3">${desc(B)}<a class="nav" href="#profile/vance"><span>${esc(B.next)}</span>${arrowR}</a></div>
       </div></div>`;
-  $('#profile').innerHTML=ret+html;
+  $('#profile').innerHTML=ret+html; wasNarrow=innerWidth<=1100;
   if(innerWidth<=1100){ const cd=$('#profile .card'), nm=$('#profile .nm'); nm.insertAdjacentElement('afterend',cd); }
   fitBlocks();
   /* 폰트 로딩·내용 높이 변화에도 라벨·블록 위치를 다시 맞춤 */
   const c2=$('#profile .c2'); if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(c2); c2.querySelectorAll('.blk').forEach(b=>{if(window.ResizeObserver) new ResizeObserver(()=>fitBlocks()).observe(b);});
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitBlocks);
+  const artEl=$('#profile .art'); if(artEl){ artEl.addEventListener('load',()=>{fitBlocks();}); }
+}
+/* 일러스트: 위 끝 → 컬럼 바닥까지 꽉 채우되 컬럼 밖으로 나가지 않게(넘치면 양옆만 잘림) */
+function fitArt(){
+  const a=$('#profile .art'); if(!a||innerWidth<=1100||!a.naturalWidth)return;
+  const col=a.parentElement, ix=parseFloat(a.style.getPropertyValue('--ix'))||0;
+  const H=col.offsetHeight+80, nat=a.naturalWidth/a.naturalHeight;
+  a.style.height=H+'px'; a.style.width=Math.min(col.clientWidth-ix, H*nat)+'px';
 }
 /* SKILL/BACKSTORY 박스가 카드·서로 겹치지 않게 세로 위치를 내용 높이에 맞춤 */
 function fitBlocks(){
   const col=$('#profile .c2'); if(!col)return;
   const cd=col.querySelector('.card'), sk=col.querySelector('.skill'), bk=col.querySelector('.back');
-  if(innerWidth<=1100){ col.querySelector('.lab-skill').style.top=(sk.offsetTop+22)+'px'; col.querySelector('.lab-back').style.top=(bk.offsetTop+22)+'px'; return; }
+  if(innerWidth<=1100){ col.querySelector('.lab-skill').style.top=(sk.offsetTop+20)+'px'; col.querySelector('.lab-back').style.top=(bk.offsetTop+20)+'px'; document.querySelectorAll('#profile .nm,#profile .card').forEach(e=>{e.style.height='';e.style.left='';e.style.top='';}); return; }
   if(!cd||cd.parentElement!==col)return;
   sk.style.top=(cd.offsetTop+cd.offsetHeight+20)+'px';
   bk.style.top=(sk.offsetTop+sk.offsetHeight+26)+'px';
@@ -310,25 +356,27 @@ function fitBlocks(){
     const h=Math.max(nm.offsetHeight,cd.offsetHeight); nm.style.height=cd.style.height=h+'px';
     nm.style.top=cd.offsetTop+'px';
     const n=nm.getBoundingClientRect(), c=cd.getBoundingClientRect(), gap=16;
-    if(pf.classList.contains('b')&&n.right>c.left-gap) nm.style.left=(nm.offsetLeft-(n.right-(c.left-gap)))+'px';
-    if(pf.classList.contains('a')&&n.left<c.right+gap) nm.style.left=(nm.offsetLeft+((c.right+gap)-n.left))+'px';
+    if(pf.classList.contains('b')) nm.style.left=(nm.offsetLeft-(n.right-(c.left-gap)))+'px';
+    if(pf.classList.contains('a')) nm.style.left=(nm.offsetLeft+((c.right+gap)-n.left))+'px';
   }
+  fitArt();
   const need=bk.offsetTop+bk.offsetHeight+24;
-  col.parentElement.style.minHeight=Math.max(innerHeight-160,need)+'px';
-  $('#profile .pf').classList.toggle('tall',need>innerHeight-160);
+  const VH=innerHeight/(parseFloat(getComputedStyle(pf).getPropertyValue('--z'))||1);
+  col.parentElement.style.minHeight=Math.max(VH-160,need)+'px';
+  pf.classList.toggle('tall',need>VH-160);
 }
-let wasNarrow=innerWidth<=1100;
+let wasNarrow=null;
 addEventListener('resize',()=>{ if(!$('#profile').classList.contains('active'))return; const n=innerWidth<=1100; if(n!==wasNarrow){wasNarrow=n;route();} else fitBlocks(); });
 
 /* ---------- 4. 서사 ---------- */
 function renderNarrative(){
   const N=D.narrative;
   const ch=N.chapters.map((c,ci)=>`<div class="ch">
-    <div class="head rv"><span class="node"></span><span class="no">#${esc(c.no)}</span><span class="tt">${esc(c.title)}</span><span class="d">${esc(c.d)}</span></div>
-    <div class="body rv">${c.body.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
-    <div class="side">${(c.notes||[]).map((n,i)=>`<div class="note"><button class="nc" aria-label="${esc(c.no)}-${i+1}"></button><div class="nb"><div class="nn">${esc(c.no)}-${i+1}</div><div class="nn" style="font-weight:700">${esc(n.t)}</div><div class="nt">${esc(n.p)}</div></div></div>`).join('')}</div>
-    <div class="talk">${(c.talk||[]).map(([w,t])=>`<div class="bub rv ${N.side[w]||'left'}">${esc(t)}</div>`).join('')}</div>
-    ${ci<N.chapters.length-1?'<div class="gap"></div>':''}
+    <div class="head rv" style="--o:${ci*10}"><span class="node"></span><span class="no">#${esc(c.no)}</span><span class="tt">${esc(c.title)}</span><span class="d">${esc(c.d)}</span></div>
+    <div class="body rv" style="--o:${ci*10+1}">${c.body.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+    <div class="side" style="--o:${ci*10+3}">${(c.notes||[]).map((n,i)=>`<div class="note"><button class="nc" aria-label="${esc(c.no)}-${i+1}"></button><div class="nb"><div class="nn">${esc(c.no)}-${i+1}</div><div class="nn" style="font-weight:700">${esc(n.t)}</div><div class="nt">${esc(n.p)}</div></div></div>`).join('')}</div>
+    <div class="talk" style="--o:${ci*10+2}">${(c.talk||[]).map(([w,t])=>`<div class="bub rv ${N.side[w]||'left'}">${esc(t)}</div>`).join('')}</div>
+    ${ci<N.chapters.length-1?`<div class="gap" style="--o:${ci*10+4}"></div>`:''}
   </div>`).join('');
   $('#narrative').innerHTML=ret+`<div class="tl"><div class="line"></div>${ch}</div>`;
   /* 작은 원 클릭 → 메모 카드 열고 닫기 */
